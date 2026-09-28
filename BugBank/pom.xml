@@ -29,4 +29,24 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version> <!-- Use uma versão recente do plugin -->
+                <configuration>
+                    <!-- Define o modo de paralelismo: 'classes', 'methods' ou 'both' -->
+                    <parallel>classes</parallel>
+
+                    <!-- Quantidade de threads simultâneas (ex: 2 navegadores ao mesmo tempo) -->
+                    <threadCount>2</threadCount>
+
+                    <!-- Garante que cada thread tenha sua própria instância do JUnit -->
+                    <perCoreThreadCount>false</perCoreThreadCount>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
