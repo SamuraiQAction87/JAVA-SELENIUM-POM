@@ -85,6 +85,7 @@ public class TransferenciaTest {
         transferenciaPage.preencherValorPorXpath(transferenciaPage.campoValor, "1000.01");
         transferenciaPage.preencherValorPorXpath(transferenciaPage.campoDescricao, "Teste Negativo!");
         transferenciaPage.clicarPorXpath(transferenciaPage.btnTransferir);
+        // Valida a mensagem de ERRO:
         transferenciaPage.validarErroNaTransferencia();
     }
 
