@@ -14,7 +14,7 @@ import page.TransferenciaPage;
 import java.time.Duration;
 
 public class TransferenciaTest {
-
+    // Atributos:
     WebDriver driver;
     LoginPage loginPage;
     CadastroPage cadastroPage;
@@ -23,18 +23,18 @@ public class TransferenciaTest {
 
     @Before
     public void before() {
-        // Configurações essenciais do Chrome para execução em Linux
+        // Configurações essenciais do Chrome para execução em Linux:
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--remote-allow-origins=*");
 
-        // Inicializa o driver com as opções
+        // Inicializa o driver com as opções:
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
 
-        // Instancia os Page Objects
+        // Instancia os Page Objects:
         loginPage = new LoginPage(driver);
         cadastroPage = new CadastroPage(driver);
         transferenciaPage = new TransferenciaPage(driver);
@@ -45,10 +45,10 @@ public class TransferenciaTest {
     /** 1º Teste: Transferência com sucesso por ter saldo. */
     @Test
     public void testeTransferenciaComSucesso() {
-        // 1 e 2. Cadastra as contas
+        // Cadastrando as duas contas:
         cadastroPage.cadastrarNovaConta("qactionI@gmail.com.br", "qactionI", "123456");
         cadastroPage.cadastrarNovaContaSemSaldo("qactionII@gmail.com.br", "qactionII", "123456");
-
+        // Variáveis que armazenam os dados da 2ª conta cadastrada:
         String conta2 = cadastroPage.conta;
         String digito2 = cadastroPage.digito;
 
@@ -58,7 +58,7 @@ public class TransferenciaTest {
         // 4. Navega até a tela de transferência
         homePage.clicarBotaoTransferencia();
 
-        // 5. Preenche a transferência inteira em 1 única chamada (DRY!)
+        // 5. Preenche a transferência inteira em 1 única chamada (DRY!) para a 2ª conta cadastrada:
         transferenciaPage.realizarTransferencia(conta2, digito2, "500.00", "Teste positivo!");
 
         // 6. Valida a mensagem de erro esperada
@@ -68,10 +68,10 @@ public class TransferenciaTest {
     /** 2º Teste: Erro ao tentar transferir por saldo insuficiente */
     @Test
     public void testeTransferenciaComErro() {
-        // 1 e 2. Cadastra as contas
+        // Cadastrando as duas contas:
         cadastroPage.cadastrarNovaConta("qactionIII@gmail.com.br", "qactionIII", "123456");
         cadastroPage.cadastrarNovaContaSemSaldo("qactionIV@gmail.com.br", "qactionIV", "123456");
-
+        // Variáveis que armazenam os dados da 2ª conta cadastrada:
         String conta4 = cadastroPage.conta;
         String digito4 = cadastroPage.digito;
 
@@ -81,7 +81,7 @@ public class TransferenciaTest {
         // 4. Navega até a tela de transferência
         homePage.clicarBotaoTransferencia();
 
-        // 5. Preenche a transferência inteira em 1 única chamada (DRY!)
+        // 5. Preenche a transferência inteira em 1 única chamada (DRY!) para a 2ª conta cadastrada:
         transferenciaPage.realizarTransferencia(conta4, digito4, "1000.01", "Teste Negativo!");
 
         // 6. Valida a mensagem de erro esperada
