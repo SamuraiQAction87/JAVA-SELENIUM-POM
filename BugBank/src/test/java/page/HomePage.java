@@ -10,73 +10,39 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class HomePage {
-    // Variável para receber o driver inicializado da classe de teste por meio do construtor:
-    WebDriver driver;
 
-    // Mapeando o soldo na home:
-    public String elementoSaldo = "//*[@id=\"textBalance\"]/span";
+    // 1. Driver privado (encapsulado)
+    private WebDriver driver;
 
-    // Mapeando o botão Transferência na home:
-    public String btnTransferencia = "//*[@id=\"btn-TRANSFERÊNCIA\"]";
+    // 2. Mapeamento dos elementos usando 'private By'
+    private By elementoSaldo  = By.xpath("//*[@id='textBalance']/span");
+    private By btnTransferencia = By.xpath("//*[@id='btn-TRANSFERÊNCIA']");
 
-    // Construtor:
+    // 3. Construtor
     public HomePage(WebDriver driver) {
         this.driver = driver;
     }
 
-    // Method para acessar e validar o saldo (Valor esperado vindo do teste):
+    // 4. Métodos auxiliares de interação
+    public void clicarPorXpath(By elemento) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(elemento));
+        element.click();
+    }
+
+    // 5. Métodos de Ação / Negócio
+
+    // Metodo para clicar no botão de Transferência
+    public void clicarBotaoTransferencia() {
+        clicarPorXpath(btnTransferencia);
+    }
+
+    // Metodo para acessar e validar o saldo
     public void validarSaldo(String valorEsperado) {
-        String valorAtual = driver.findElement(By.xpath(elementoSaldo)).getText();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(elementoSaldo));
+
+        String valorAtual = driver.findElement(elementoSaldo).getText();
         Assert.assertEquals(valorEsperado, valorAtual);
     }
-
-    // Metodo genérico para clicar aguardando o elemento ficar clicável
-    public void clicarPorXpath(String xpath) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        WebElement elemento = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
-        elemento.click();
-    }
-
-    /*
-    // Method para acessar e validar o saldo (Valor esperado chumbado):
-    public void validarSaldo() {
-        String valorAtual = driver.findElement(By.xpath(elementoSaldo)).getText();
-        String valorEsperado = "R$ 1.000,00";
-        // Valida se a mensagem esperada está contida na String capturada:
-        Assert.assertTrue(valorAtual.contains(valorEsperado));
-    }
-    */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

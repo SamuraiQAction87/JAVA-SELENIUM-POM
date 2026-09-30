@@ -3,59 +3,63 @@ package page;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Wait;
 
 import java.time.Duration;
 
 public class TransferenciaPage {
 
-    // Mapeamento dos elementos da tela de transferência via Xpath
-    public String campoNumeroDaConta = "//body/div[@id='__next']/div[1]/div[3]/form[1]/div[1]/div[1]/input[1]";
-    public String campoDigitoConta = "//body/div[@id='__next']/div[1]/div[3]/form[1]/div[1]/div[2]/input[1]";
-    public String campoValor = "//body/div[@id='__next']/div[1]/div[3]/form[1]/div[2]/input[1]";
-    public String campoDescricao = "//body/div[@id='__next']/div[1]/div[3]/form[1]/div[3]/input[1]";
-    public String btnTransferir = "//button[contains(text(),'Transferir agora')]";
+    // 1. Driver privado (encapsulado)
+    private final WebDriver driver;
 
-    WebDriver driver;
+    // 2. Mapeamento dos campos do formulário (usando By nativo)
+    private final By campoNumeroDaConta = By.xpath("//input[@name='accountNumber']");
+    private final By campoDigitoConta   = By.xpath("//input[@name='digit']");
+    private final By campoValor         = By.xpath("//input[@name='transferValue']");
+    private final By campoDescricao     = By.xpath("//input[@name='description']");
+    private final By btnTransferirII    = By.xpath("//button[text()='Transferir agora']");
 
-    // Construtor que recebe a instância ativa do WebDriver
+    // 3. Textos esperados nos modais (usados no getPageSource para evitar instabilidade da DOM)
+    private final String txtSucesso = "Transferencia realizada com sucesso";
+    private final String txtErro    = "Você não tem saldo suficiente para essa transação";
+
+    // Construtor
     public TransferenciaPage(WebDriver driver) {
         this.driver = driver;
     }
 
-    // Preenche os campos de texto localizando o elemento pelo Xpath
-    public void preencherValorPorXpath(String elemento, String valor) {
-        driver.findElement(By.xpath(elemento)).sendKeys(valor);
+    // Métodos auxiliares
+    private void preencherValorPorXpath(By elemento, String texto) {
+        driver.findElement(elemento).sendKeys(texto);
     }
 
-    // Aguarda até o elemento estar visível na tela e clica nele
-    public void clicarPorXpath(String elemento) {
+    public void clicarPorXpath(By elemento) {
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(d -> d.findElement(By.xpath(elemento)).isDisplayed());
-        driver.findElement(By.xpath(elemento)).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(elemento));
+        driver.findElement(elemento).click();
     }
 
-    // Valida a mensagem de sucesso consultando diretamente o código-fonte HTML da página
+    // Fluxo DRY
+    public void realizarTransferencia(String conta, String digito, String valor, String descricao) {
+        preencherValorPorXpath(campoNumeroDaConta, conta);
+        preencherValorPorXpath(campoDigitoConta, digito);
+        preencherValorPorXpath(campoValor, valor);
+        preencherValorPorXpath(campoDescricao, descricao);
+        clicarPorXpath(btnTransferirII);
+    }
+
+    // Validação via getPageSource usando a variável da classe (estável e sem duplicidade)
     public void validarTransferenciaSucesso() {
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(d -> d.getPageSource().contains("Transferencia realizada com sucesso"));
-        Assert.assertTrue("Erro ao validar a transferencia!", driver.getPageSource().contains("Transferencia realizada com sucesso"));
+        wait.until(d -> d.getPageSource().contains(txtSucesso));
+        Assert.assertTrue("Erro ao validar a transferencia!", driver.getPageSource().contains(txtSucesso));
     }
 
-    /** Valida a mensagem de ERRO na transferência, ao tentar transferir sem saldo o suficiente. */
     public void validarErroNaTransferencia() {
-        String mensagemDeErro = "Você não tem saldo suficiente para essa transação";
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(d -> d.getPageSource().contains(mensagemDeErro));
-        Assert.assertTrue("Erro ao validar a transferencia!", driver.getPageSource().contains(mensagemDeErro));
+        wait.until(d -> d.getPageSource().contains(txtErro));
+        Assert.assertTrue("Erro ao validar o saldo insuficiente!", driver.getPageSource().contains(txtErro));
     }
 }
-
-
-
-
-
-
-
-
