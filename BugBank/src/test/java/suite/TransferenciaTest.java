@@ -49,8 +49,8 @@ public class TransferenciaTest {
         cadastroPage.cadastrarNovaConta("qactionI@gmail.com.br", "qactionI", "123456");
         cadastroPage.cadastrarNovaContaSemSaldo("qactionII@gmail.com.br", "qactionII", "123456");
 
-        String conta4 = cadastroPage.conta;
-        String digito4 = cadastroPage.digito;
+        String conta2 = cadastroPage.conta;
+        String digito2 = cadastroPage.digito;
 
         // 3. Login
         loginPage.fazerLogin("qactionI@gmail.com.br", "123456");
@@ -59,7 +59,7 @@ public class TransferenciaTest {
         homePage.clicarBotaoTransferencia();
 
         // 5. Preenche a transferência inteira em 1 única chamada (DRY!)
-        transferenciaPage.realizarTransferencia(conta4, digito4, "500.00", "Teste positivo!");
+        transferenciaPage.realizarTransferencia(conta2, digito2, "500.00", "Teste positivo!");
 
         // 6. Valida a mensagem de erro esperada
         transferenciaPage.validarTransferenciaSucesso();
